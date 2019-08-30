@@ -6,7 +6,7 @@ var MAX_GUESSES = 10;
 var HANDLE_REPEAT_GUESSES = false;
 var WORD_LIST = [
     {w:'Steven Universe', h:'<h3>T.V. Show (Animated)</h3><p>This show sets itself apart with incredibly heavy-hitting morals as it progresses. If you haven\'t seen this show, I highly <em>highly</em> recommend it for all ages. It\'s a show full of love without stipulations.</p>',r:'<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/MIREK5ZL1jA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'},
-    {w:'Adventure Time', h:'<h3>T.V. Show (Animated)</h3><p>Amusing and energetic, this show sets itself apart with its wildly weird world based on Celtic mythology and its deep exploration of friendship and overcoming life\'s hardships.</p>',r:'<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/gfijG7pmMqk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'},
+    {w:'Adventure Time', h:'<h3>T.V. Show (Animated)</h3><p>Amusing and energetic, this show sets itself apart with its wildly weird world based on Irish and Celtic mythology and its deep exploration of friendship and overcoming life\'s hardships.</p>',r:'<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/gfijG7pmMqk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'},
     {w:'Galavant', h:'<h3>T.V. Show (Musical)</h3><p>Hilariously tongue-in-cheek, this show is a great way to relax and enjoy your leisure time. Follow our protagonist as they journey to save their beloved. And yes, they all really do sing. It\'s amazing.</p>',r:'<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/QWnDwM0RSX4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'},
     {w:'Dead Cells', h:'<h3>Roguelike Video Game</h3><p>One of the best aesthetics in a roguelike in recent years, this game continues to challenge you more and more even after you manage to beat it\'s increasingly-harder modes. While a solid roguelike, it is also a top-quality metroidvania game.</p>',r:'<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/RvGaSPTcTxc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'},
     {w:'Aggretsuko', h:'<h3>T.V. Show (Animated)</h3><p>One of the most frustratingly-relatable and loveable shows, navigating feelings plays a key role in its protagonist\'s daily life just trying to survive, and we get to share in the ups and downs that come along with them.</p>',r:'<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/z9jGaJJlNyo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'},
@@ -284,34 +284,6 @@ var game = {
 
                 // Show the game screen
                 document.getElementById('game-screen').setAttribute('class', 'display-block');
-            }
-        },
-        'respond-to-game-input': {
-            unloadState: function() {
-                console.log("unloading: respond-to-game-input");
-
-                // Hide the game screen if we're going back to the start screen
-                if (game.nextState === 'start-screen') {
-                    document.getElementById('game-screen').setAttribute('class', 'display-none');
-                }
-            },
-            loadState: function() {
-                console.log("loading: respond-to-game-input");
-                
-                // Update the new game state's screen
-                game.updateScreen();
-
-                document.onkeyup = function(event) {
-
-                    // If we don't want to play this word anymore, we can hit the 'escape' key to return to the start screen
-                    if (event.key.toLocaleLowerCase() === 'escape') {
-
-                        game.losses++;
-                        
-                        // Take the player back to the start screen
-                        game.switchState('start-screen');
-                    }
-                };
             }
         },
         'game-lose': {
