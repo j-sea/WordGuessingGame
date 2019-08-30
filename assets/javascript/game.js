@@ -317,8 +317,8 @@ var game = {
 
                 document.onkeyup = function(event) {
 
-                    // If the 'enter' key is pressed
-                    if (event.key.toLocaleLowerCase() === 'enter' || event.key.toLocaleLowerCase() === 'return') {
+                    // If the 'escape' key is pressed
+                    if (event.key.toLocaleLowerCase() === 'escape') {
 
                         // We'll restart the game with a new word
                         game.setupNewGame();
@@ -369,8 +369,8 @@ var game = {
 
                 document.onkeyup = function(event) {
 
-                    // If the 'enter' key is pressed
-                    if (event.key.toLocaleLowerCase() === 'enter' || event.key.toLocaleLowerCase() === 'return') {
+                    // If the 'escape' key is pressed
+                    if (event.key.toLocaleLowerCase() === 'escape') {
 
                         // We'll restart the game with a new word
                         game.setupNewGame();
