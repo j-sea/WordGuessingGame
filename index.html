@@ -4,20 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Good Stuff Guessing Game</title>
+    <link href="https://fonts.googleapis.com/css?family=Share+Tech|Share+Tech+Mono&display=swap" rel="stylesheet"> 
     <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 <body>
     <header>
-        <h1>Fruit Guessing Game</h1>
+        <h1>Good Stuff Guessing Game</h1>
     </header>
     <main>
-        <div id="start-screen" class="display-none">
-            <p>Press any key to start the game!</p>
-        </div>
+        <section id="start-screen" class="display-none">
+            <p>This is a word guessing game similar to the classic game <em>Hangman</em>; however, there will no be hanging!</p>
+            <footer>
+                <p>Press any key to start the game!</p>
+            </footer>
+        </section>
         <section id="game-screen" class="display-none">
-            <h2>Guess this <span class="number-of-letters">0</span>-letter word!</h2>
-
             <table>
                 <thead>
                     <tr>
@@ -35,6 +37,10 @@
                 </tbody>
             </table>
 
+            <h2>Guess this <span class="number-of-letters">0</span>-letter word!</h2>
+
+            <p id="hint">(none)</p>
+
             <p><strong>Current Word:</strong> <span id="correct-letters-guessed">N/A</span></p>
             <p><strong>Wrong Letters:</strong> <span id="incorrect-letters-guessed">N/A</span></p>
 
@@ -42,7 +48,9 @@
                 <h2>You won! The word was "<span class="current-word"></span>"!</h2>
 
                 <p>You've won <span class="number-of-wins">0</span> game<span class="wins-pluralizer">s</span> <span class="display-block">and lost <span class="number-of-losses">0</span> game<span class="losses-pluralizer">s</span>.</span></p>
-                
+
+                <p id="reward">(none)</p>
+
                 <footer>
                     <p>Press the "Enter" key to start a new game!</p>
                 </footer>
@@ -53,10 +61,14 @@
 
                 <p>You've won <span class="number-of-wins">0</span> game<span class="wins-pluralizer">s</span> <span class="display-block">and lost <span class="number-of-losses">0</span> game<span class="losses-pluralizer">s</span>.</span></p>
 
+                <p><strong>Reward:</strong> (none)</p>
+
                 <footer>
                     <p>Press the "Enter" key to start a new game!</p>
                 </footer>
             </section>
+
+            <div id="game-popup-overlay" class="display-none"></div>
 
             <footer>
                 <p>Press letters on your keyboard to guess the word.</p>
