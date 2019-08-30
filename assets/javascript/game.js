@@ -1,6 +1,6 @@
 // GAME SETTINGS
 var MAX_GUESSES = 10;
-var HANDLE_REPEAT_GUESSES = false;
+var HANDLE_REPEAT_GUESSES = true;
 var WORD_LIST = [
     'watermelon',
     'pineapple',
@@ -12,12 +12,14 @@ var WORD_LIST = [
 var VALID_LETTER_LIST = [
     'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'
 ];
+var UNGUESSED_LETTER = '_';
 
 // Store the game logic inside its own object
 var game = {
 
     // Set up variables we'll be using to keep track of game data
     currentState: '',
+    nextState: '',
     currentWord: '',
     uniqueLetters: 0,
     wins: 0,
@@ -104,18 +106,11 @@ var game = {
     handleCorrectGuess(keyGuessed) {
         console.log(`correctly guessing '${keyGuessed}'`);
 
-        this.guesses++;
-
         this.keysRevealed.push(keyGuessed);
 
         // If we guessed all the characters correctly, we won the game.
-        // NOTE: We do this check before determining if max guesses have been reached because we want the player to be able to win on their last guess.
         if (this.uniqueLetters === this.keysRevealed.length) {
             this.switchState('game-win');
-        }
-        // If we've reached maximum guesses, we lost the game
-        else if (this.guesses === MAX_GUESSES) {
-            this.switchState('game-lose');
         }
         // Otherwise, continue on as usual and just update the screen
         else {
@@ -126,6 +121,74 @@ var game = {
     // Create a method for updating the screen
     updateScreen() {
         console.log("screen updating");
+
+        var numberOfWinsElements = document.getElementsByClassName('number-of-wins');
+        for (var i = 0; i < numberOfWinsElements.length; i++) {
+            numberOfWinsElements[i].textContent = this.wins;
+        }
+
+        var numberOfLossesElements = document.getElementsByClassName('number-of-losses');
+        for (var i = 0; i < numberOfLossesElements.length; i++) {
+            numberOfLossesElements[i].textContent = this.losses;
+        }
+
+        var numberOfGuessesLeftElements = document.getElementsByClassName('number-of-guesses-left');
+        for (var i = 0; i < numberOfGuessesLeftElements.length; i++) {
+            numberOfGuessesLeftElements[i].textContent = MAX_GUESSES - this.guesses;
+        }
+
+        var numberOfLettersElements = document.getElementsByClassName('number-of-letters');
+        for (var i = 0; i < numberOfLettersElements.length; i++) {
+            numberOfLettersElements[i].textContent = this.currentWord.length;
+        }
+
+        var currentWordElements = document.getElementsByClassName('current-word');
+        for (var i = 0; i < currentWordElements.length; i++) {
+            currentWordElements[i].textContent = this.currentWord;
+        }
+
+        var winsPluralizerElements = document.getElementsByClassName('wins-pluralizer');
+        for (var i = 0; i < winsPluralizerElements.length; i++) {
+            if (this.wins !== 1) {
+                winsPluralizerElements[i].setAttribute("class", "wins-pluralizer");
+            }
+            else {
+                winsPluralizerElements[i].setAttribute("class", "wins-pluralizer display-none");
+            }
+        }
+
+        var lossesPluralizerElements = document.getElementsByClassName('losses-pluralizer');
+        for (var i = 0; i < lossesPluralizerElements.length; i++) {
+            if (this.losses !== 1) {
+                lossesPluralizerElements[i].setAttribute("class", "losses-pluralizer");
+            }
+            else {
+                lossesPluralizerElements[i].setAttribute("class", "losses-pluralizer display-none");
+            }
+        }
+
+        var correctLettersGuessed = document.getElementById('correct-letters-guessed');
+        var revealedLettersString = '';
+        for (var i = 0; i < this.currentWord.length; i++) {
+
+            if (i !== 0) {
+                revealedLettersString += ' ';
+            }
+            
+            if (this.keysRevealed.indexOf(this.currentWord[i]) !== -1) {
+                
+                revealedLettersString += this.currentWord[i];
+            }
+            else {
+
+                revealedLettersString += UNGUESSED_LETTER;
+            }
+        }
+        correctLettersGuessed.textContent = revealedLettersString;
+
+        var incorrectLettersGuessed = document.getElementById('incorrect-letters-guessed');
+        var incorrectLettersString = this.keysIncorrect.join(", ");
+        incorrectLettersGuessed.textContent = incorrectLettersString;
     },
 
     // We'll use a state machine to keep track of our different game states' logic
@@ -136,14 +199,21 @@ var game = {
 
                 // Make sure our key event handler is removed
                 document.onkeyup = undefined;
+
+                // Hide the start screen
+                document.getElementById('start-screen').setAttribute('class', 'display-none');
             },
             loadState: function() {
                 console.log("loading: start-screen");
 
+                // NOTE: Since 'this' isn't referencing the game object in here, we'll just reference it through the global 'game' variable
+
+                // Update the new game state's screen
+                game.updateScreen();
+
                 document.onkeyup = function(event) {
 
                     // If any key is pressed, we should start the game
-                    // NOTE: Since 'this' isn't referencing the game object in here, we'll just reference it through the global 'game' variable
                     
                     // Set up a new game
                     game.setupNewGame();
@@ -151,6 +221,9 @@ var game = {
                     // Start waiting for letter guessing by the player
                     game.switchState('wait-for-game-input');
                 };
+
+                // Show the start screen
+                document.getElementById('start-screen').setAttribute('class', 'display-block');
             }
         },
         'wait-for-game-input': {
@@ -159,13 +232,21 @@ var game = {
 
                 // Make sure our key event handler is removed
                 document.onkeyup = undefined;
+
+                // Hide the game screen if we're going back to the start screen
+                if (game.nextState === 'start-screen') {
+                    document.getElementById('game-screen').setAttribute('class', 'display-none');
+                }
             },
             loadState: function() {
                 console.log("loading: waiting for game input");
 
-                document.onkeyup = function(event) {
+                // NOTE: Since 'this' isn't referencing the game object in here, we'll just reference it through the global 'game' variable
 
-                    // NOTE: Since 'this' isn't referencing the game object in here, we'll just reference it through the global 'game' variable
+                // Update the new game state's screen
+                game.updateScreen();
+
+                document.onkeyup = function(event) {
 
                     // If an acceptable letter key is pressed, get it handled
                     if (VALID_LETTER_LIST.indexOf(event.key.toLowerCase()) !== -1) {
@@ -175,21 +256,44 @@ var game = {
                     }
                     // If we don't want to play this word anymore, we can hit the 'escape' key to return to the start screen
                     else if (event.key.toLowerCase() === 'escape') {
+
+                        game.losses++;
                         
                         // Take the player back to the start screen
                         game.switchState('start-screen');
                     }
                 };
+
+                // Show the game screen
+                document.getElementById('game-screen').setAttribute('class', 'display-block');
             }
         },
         'respond-to-game-input': {
             unloadState: function() {
                 console.log("unloading: respond-to-game-input");
-                
+
+                // Hide the game screen if we're going back to the start screen
+                if (game.nextState === 'start-screen') {
+                    document.getElementById('game-screen').setAttribute('class', 'display-none');
+                }
             },
             loadState: function() {
                 console.log("loading: respond-to-game-input");
                 
+                // Update the new game state's screen
+                game.updateScreen();
+
+                document.onkeyup = function(event) {
+
+                    // If we don't want to play this word anymore, we can hit the 'escape' key to return to the start screen
+                    if (event.key.toLowerCase() === 'escape') {
+
+                        game.losses++;
+                        
+                        // Take the player back to the start screen
+                        game.switchState('start-screen');
+                    }
+                };
             }
         },
         'game-lose': {
@@ -198,24 +302,41 @@ var game = {
 
                 // Make sure our key event handler is removed
                 document.onkeyup = undefined;
+
+                // Hide the lose pop-up
+                document.getElementById('game-lose-popup').setAttribute('class', 'display-none');
+
+                // Hide the game screen if we're going back to the start screen
+                if (game.nextState === 'start-screen') {
+                    document.getElementById('game-screen').setAttribute('class', 'display-none');
+                }
             },
             loadState: function() {
                 console.log("loading: game-lose");
                 
                 // NOTE: Since 'this' isn't referencing the game object in here, we'll just reference it through the global 'game' variable
 
+                // Update the game state
                 game.losses++;
 
+                // Update the new game state's screen
                 game.updateScreen();
 
                 document.onkeyup = function(event) {
-                    
-                    // If the 'enter' key is pressed, we'll restart the game with a new word
-                    game.setupNewGame();
 
-                    // Go straight back into the game skipping the start screen
-                    game.switchState('wait-for-game-input');
+                    // If the 'enter' key is pressed
+                    if (event.key.toLowerCase() === 'enter' || event.key.toLowerCase() === 'return') {
+
+                        // We'll restart the game with a new word
+                        game.setupNewGame();
+
+                        // Go straight back into the game skipping the start screen
+                        game.switchState('wait-for-game-input');
+                    }
                 }
+
+                // Show the lose pop-up
+                document.getElementById('game-lose-popup').setAttribute('class', 'display-block');
             }
         },
         'game-win': {
@@ -224,30 +345,50 @@ var game = {
                 
                 // Make sure our key event handler is removed
                 document.onkeyup = undefined;
+
+                // Hide the win pop-up
+                document.getElementById('game-win-popup').setAttribute('class', 'display-none');
+
+                // Hide the game screen if we're going back to the start screen
+                if (game.nextState === 'start-screen') {
+                    document.getElementById('game-screen').setAttribute('class', 'display-none');
+                }
             },
             loadState: function() {
                 console.log("loading: game-win");
 
                 // NOTE: Since 'this' isn't referencing the game object in here, we'll just reference it through the global 'game' variable
 
+                // Update the game state
                 game.wins++;
 
+                // Update the new game state's screen
                 game.updateScreen();
 
                 document.onkeyup = function(event) {
-                    
-                    // If the 'enter' key is pressed, we'll restart the game with a new word
-                    game.setupNewGame();
 
-                    // Go straight back into the game skipping the start screen
-                    game.switchState('wait-for-game-input');
+                    // If the 'enter' key is pressed
+                    if (event.key.toLowerCase() === 'enter' || event.key.toLowerCase() === 'return') {
+
+                        // We'll restart the game with a new word
+                        game.setupNewGame();
+    
+                        // Go straight back into the game skipping the start screen
+                        game.switchState('wait-for-game-input');
+                    }
                 }
+
+                // Show the win pop-up
+                document.getElementById('game-win-popup').setAttribute('class', 'display-block');
             }
         },
     },
     
     // Create a method for switching states
     switchState(newState) {
+
+        // Set the next state so individual states can plan accordingly
+        this.nextState = newState;
 
         // If we have a state loaded already, unload it first
         if (this.currentState !== '') {
@@ -263,6 +404,9 @@ var game = {
         else {
             throw `The state '${this.currentState}' does not exist!`;
         }
+
+        // Clear the next state since there isn't one anymore
+        this.nextState = '';
     }
 };
 
