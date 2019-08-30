@@ -9,6 +9,9 @@ var WORD_LIST = [
     'apple',
     'pear'
 ];
+var VALID_LETTER_LIST = [
+    'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'
+];
 
 // Store the game logic inside its own object
 var game = {
@@ -25,13 +28,24 @@ var game = {
 
     // Create a method to handle setting up a new game
     setupNewGame: function() {
-        this.currentWord = '';
-        this.uniqueLetters = 0;
-        this.wins = 0;
-        this.losses = 0;
+        console.log('setting up new game');
+
+        // Get a new word while ensuring it isn't the same word as the last one played by the user
+        var newWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)].toLowerCase();
+        while (newWord === this.currentWord) {
+            newWord = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)].toLowerCase();
+        }
+        this.currentWord = newWord;
+
+        // Determine the amount of unique characters utilizing a unique-set data structure to our advantage
+        this.uniqueLetters = (new Set(newWord)).size;
+
+        // Reset the game state
         this.guesses = 0;
         this.keysRevealed = [];
         this.keysIncorrect = [];
+
+        console.log(`New word: ${newWord} with ${this.uniqueLetters} unique letters`);
     },
 
     // Create a method for applying guessing logic to a given key character
@@ -53,7 +67,9 @@ var game = {
     },
 
     // Create a method for handling a repeat key guess
-    handleRepeatGuess(keyGuess) {
+    handleRepeatGuess(keyGuessed) {
+        console.log(`repeating guess for '${keyGuessed}'`);
+
         this.guesses++;
 
         // If we've reached maximum guesses, we lost the game
@@ -68,6 +84,8 @@ var game = {
     
     // Create a method for handling an incorrect key guess
     handleIncorrectGuess(keyGuessed) {
+        console.log(`incorrectly guessing '${keyGuessed}'`);
+
         this.guesses++;
 
         this.keysIncorrect.push(keyGuessed);
@@ -81,9 +99,11 @@ var game = {
             this.updateScreen();
         }
     },
-    
+
     // Create a method for handling a correct key guess
     handleCorrectGuess(keyGuessed) {
+        console.log(`correctly guessing '${keyGuessed}'`);
+
         this.guesses++;
 
         this.keysRevealed.push(keyGuessed);
@@ -105,75 +125,130 @@ var game = {
 
     // Create a method for updating the screen
     updateScreen() {
-
+        console.log("screen updating");
     },
 
     // We'll use a state machine to keep track of our different game states' logic
     stateObjects: {
         'start-screen': {
             unloadState: function() {
+                console.log("unloading: start-screen");
+
                 // Make sure our key event handler is removed
                 document.onkeyup = undefined;
-
-                console.log("unloading: start-screen");
             },
             loadState: function() {
-                // If any key is pressed, we should start the game
+                console.log("loading: start-screen");
+
                 document.onkeyup = function(event) {
+
+                    // If any key is pressed, we should start the game
+                    // NOTE: Since 'this' isn't referencing the game object in here, we'll just reference it through the global 'game' variable
+                    
                     // Set up a new game
                     game.setupNewGame();
-
-                    // Since 'this' isn't referencing the game object here, we'll just reference it through the global 'game' variable
+                    
+                    // Start waiting for letter guessing by the player
                     game.switchState('wait-for-game-input');
                 };
-
-                console.log("loading: start-screen");
             }
         },
         'wait-for-game-input': {
             unloadState: function() {
-
                 console.log("unloading: waiting for game input");
+
+                // Make sure our key event handler is removed
+                document.onkeyup = undefined;
             },
             loadState: function() {
-
                 console.log("loading: waiting for game input");
+
+                document.onkeyup = function(event) {
+
+                    // NOTE: Since 'this' isn't referencing the game object in here, we'll just reference it through the global 'game' variable
+
+                    // If an acceptable letter key is pressed, get it handled
+                    if (VALID_LETTER_LIST.indexOf(event.key.toLowerCase()) !== -1) {
+
+                        // Make the guess with the user's key
+                        game.makeGuess(event.key.toLowerCase());
+                    }
+                    // If we don't want to play this word anymore, we can hit the 'escape' key to return to the start screen
+                    else if (event.key.toLowerCase() === 'escape') {
+                        
+                        // Take the player back to the start screen
+                        game.switchState('start-screen');
+                    }
+                };
             }
         },
         'respond-to-game-input': {
             unloadState: function() {
-                
                 console.log("unloading: respond-to-game-input");
+                
             },
             loadState: function() {
-                
                 console.log("loading: respond-to-game-input");
+                
             }
         },
         'game-lose': {
             unloadState: function() {
-                
                 console.log("unloading: game-lose");
+
+                // Make sure our key event handler is removed
+                document.onkeyup = undefined;
             },
             loadState: function() {
-                
                 console.log("loading: game-lose");
+                
+                // NOTE: Since 'this' isn't referencing the game object in here, we'll just reference it through the global 'game' variable
+
+                game.losses++;
+
+                game.updateScreen();
+
+                document.onkeyup = function(event) {
+                    
+                    // If the 'enter' key is pressed, we'll restart the game with a new word
+                    game.setupNewGame();
+
+                    // Go straight back into the game skipping the start screen
+                    game.switchState('wait-for-game-input');
+                }
             }
         },
         'game-win': {
             unloadState: function() {
-                
                 console.log("unloading: game-win");
+                
+                // Make sure our key event handler is removed
+                document.onkeyup = undefined;
             },
             loadState: function() {
-                
                 console.log("loading: game-win");
+
+                // NOTE: Since 'this' isn't referencing the game object in here, we'll just reference it through the global 'game' variable
+
+                game.wins++;
+
+                game.updateScreen();
+
+                document.onkeyup = function(event) {
+                    
+                    // If the 'enter' key is pressed, we'll restart the game with a new word
+                    game.setupNewGame();
+
+                    // Go straight back into the game skipping the start screen
+                    game.switchState('wait-for-game-input');
+                }
             }
         },
     },
     
     // Create a method for switching states
     switchState(newState) {
+
         // If we have a state loaded already, unload it first
         if (this.currentState !== '') {
             this.stateObjects[this.currentState].unloadState(); // If the currentState isn't empty, the state object must exist; so no error checking necessary
