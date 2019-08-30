@@ -12,6 +12,7 @@ var WORD_LIST = [
 var VALID_LETTER_LIST = [
     'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'
 ];
+var UNGUESSED_LETTER = '_';
 
 // Store the game logic inside its own object
 var game = {
@@ -164,6 +165,29 @@ var game = {
                 lossesPluralizerElements[i].setAttribute("class", "losses-pluralizer display-none");
             }
         }
+
+        var correctLettersGuessed = document.getElementById('correct-letters-guessed');
+        var revealedLettersString = '';
+        for (var i = 0; i < this.currentWord.length; i++) {
+
+            if (i !== 0) {
+                revealedLettersString += ' ';
+            }
+            
+            if (this.keysRevealed.indexOf(this.currentWord[i]) !== -1) {
+                
+                revealedLettersString += this.currentWord[i];
+            }
+            else {
+
+                revealedLettersString += UNGUESSED_LETTER;
+            }
+        }
+        correctLettersGuessed.textContent = revealedLettersString;
+
+        var incorrectLettersGuessed = document.getElementById('incorrect-letters-guessed');
+        var incorrectLettersString = this.keysIncorrect.join(", ");
+        incorrectLettersGuessed.textContent = incorrectLettersString;
     },
 
     // We'll use a state machine to keep track of our different game states' logic
