@@ -2,6 +2,14 @@ body {
     font-family: 'Share Tech', sans-serif;
     font-size: 24px;
     text-align: center;
+    background-image: url('../images/beige-tiles.png');
+    background-repeat: repeat;
+    animation: scrollBackground 60s linear infinite;
+}
+
+@keyframes scrollBackground {
+	from { background-position: 0px 0px; }
+	to { background-position: 200px 400px; }
 }
 
 h1 {
@@ -27,6 +35,10 @@ th {
     background-color: lightgray;
 }
 
+td {
+    background-color: #eee;
+}
+
 main {
     margin: 40px auto;
     max-width: 768px;
@@ -50,6 +62,7 @@ footer {
     padding: 10px 20px;
     border: thin solid black;
     box-shadow: 5px 5px 10px black, 0px 0px 3px black;
+    background-color: #fff;
 }
 
 #game-win-popup,
