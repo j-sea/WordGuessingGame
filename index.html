@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 <body>
     <header>
-        <h1>Word Guessing Game</h1>
+        <h1>Fruit Guessing Game</h1>
     </header>
     <main>
-        <div id="start-screen">
+        <div id="start-screen" class="display-none">
             <p>Press any key to start the game!</p>
         </div>
-        <section id="game-screen">
+        <section id="game-screen" class="display-none">
             <h2>Guess this <span class="number-of-letters">0</span>-letter word!</h2>
 
             <table>
@@ -34,15 +35,10 @@
                 </tbody>
             </table>
 
-            <p id="correct-letters-guessed">test</p>
-            <p id="incorrect-letters-guessed">test</p>
+            <p><strong>Current Word:</strong> <span id="correct-letters-guessed">N/A</span></p>
+            <p><strong>Wrong Letters:</strong> <span id="incorrect-letters-guessed">N/A</span></p>
 
-            <footer>
-                <p>Press letters on your keyboard to guess the word.</p>
-                <p>Press the "Escape" key to go back to the start screen. It <em>will</em> count as a loss.</p>
-            </footer>
-
-            <section id="game-win">
+            <section id="game-win-popup" class="display-none">
                 <h2>You won! The word was "<span class="current-word"></span>"!</h2>
 
                 <p>You've won <span class="number-of-wins">0</span> game<span class="wins-pluralizer">s</span> <span class="display-block">and lost <span class="number-of-losses">0</span> game<span class="losses-pluralizer">s</span>.</span></p>
@@ -51,7 +47,8 @@
                     <p>Press the "Enter" key to start a new game!</p>
                 </footer>
             </section>
-            <section id="game-lose">
+
+            <section id="game-lose-popup" class="display-none">
                 <h2>You lost! The word was "<span class="current-word"></span>"!</h2>
 
                 <p>You've won <span class="number-of-wins">0</span> game<span class="wins-pluralizer">s</span> <span class="display-block">and lost <span class="number-of-losses">0</span> game<span class="losses-pluralizer">s</span>.</span></p>
@@ -60,6 +57,11 @@
                     <p>Press the "Enter" key to start a new game!</p>
                 </footer>
             </section>
+
+            <footer>
+                <p>Press letters on your keyboard to guess the word.</p>
+                <p>Press the "Escape" key to go back to the start screen. It <em>will</em> count as a loss.</p>
+            </footer>
         </section>
     </main>
     <footer>

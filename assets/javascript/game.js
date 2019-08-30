@@ -1,6 +1,6 @@
 // GAME SETTINGS
 var MAX_GUESSES = 10;
-var HANDLE_REPEAT_GUESSES = false;
+var HANDLE_REPEAT_GUESSES = true;
 var WORD_LIST = [
     'watermelon',
     'pineapple',
@@ -19,6 +19,7 @@ var game = {
 
     // Set up variables we'll be using to keep track of game data
     currentState: '',
+    nextState: '',
     currentWord: '',
     uniqueLetters: 0,
     wins: 0,
@@ -198,6 +199,9 @@ var game = {
 
                 // Make sure our key event handler is removed
                 document.onkeyup = undefined;
+
+                // Hide the start screen
+                document.getElementById('start-screen').setAttribute('class', 'display-none');
             },
             loadState: function() {
                 console.log("loading: start-screen");
@@ -217,6 +221,9 @@ var game = {
                     // Start waiting for letter guessing by the player
                     game.switchState('wait-for-game-input');
                 };
+
+                // Show the start screen
+                document.getElementById('start-screen').setAttribute('class', 'display-block');
             }
         },
         'wait-for-game-input': {
@@ -225,6 +232,11 @@ var game = {
 
                 // Make sure our key event handler is removed
                 document.onkeyup = undefined;
+
+                // Hide the game screen if we're going back to the start screen
+                if (game.nextState === 'start-screen') {
+                    document.getElementById('game-screen').setAttribute('class', 'display-none');
+                }
             },
             loadState: function() {
                 console.log("loading: waiting for game input");
@@ -244,21 +256,44 @@ var game = {
                     }
                     // If we don't want to play this word anymore, we can hit the 'escape' key to return to the start screen
                     else if (event.key.toLowerCase() === 'escape') {
+
+                        game.losses++;
                         
                         // Take the player back to the start screen
                         game.switchState('start-screen');
                     }
                 };
+
+                // Show the game screen
+                document.getElementById('game-screen').setAttribute('class', 'display-block');
             }
         },
         'respond-to-game-input': {
             unloadState: function() {
                 console.log("unloading: respond-to-game-input");
-                
+
+                // Hide the game screen if we're going back to the start screen
+                if (game.nextState === 'start-screen') {
+                    document.getElementById('game-screen').setAttribute('class', 'display-none');
+                }
             },
             loadState: function() {
                 console.log("loading: respond-to-game-input");
                 
+                // Update the new game state's screen
+                game.updateScreen();
+
+                document.onkeyup = function(event) {
+
+                    // If we don't want to play this word anymore, we can hit the 'escape' key to return to the start screen
+                    if (event.key.toLowerCase() === 'escape') {
+
+                        game.losses++;
+                        
+                        // Take the player back to the start screen
+                        game.switchState('start-screen');
+                    }
+                };
             }
         },
         'game-lose': {
@@ -267,6 +302,14 @@ var game = {
 
                 // Make sure our key event handler is removed
                 document.onkeyup = undefined;
+
+                // Hide the lose pop-up
+                document.getElementById('game-lose-popup').setAttribute('class', 'display-none');
+
+                // Hide the game screen if we're going back to the start screen
+                if (game.nextState === 'start-screen') {
+                    document.getElementById('game-screen').setAttribute('class', 'display-none');
+                }
             },
             loadState: function() {
                 console.log("loading: game-lose");
@@ -291,6 +334,9 @@ var game = {
                         game.switchState('wait-for-game-input');
                     }
                 }
+
+                // Show the lose pop-up
+                document.getElementById('game-lose-popup').setAttribute('class', 'display-block');
             }
         },
         'game-win': {
@@ -299,6 +345,14 @@ var game = {
                 
                 // Make sure our key event handler is removed
                 document.onkeyup = undefined;
+
+                // Hide the win pop-up
+                document.getElementById('game-win-popup').setAttribute('class', 'display-none');
+
+                // Hide the game screen if we're going back to the start screen
+                if (game.nextState === 'start-screen') {
+                    document.getElementById('game-screen').setAttribute('class', 'display-none');
+                }
             },
             loadState: function() {
                 console.log("loading: game-win");
@@ -323,12 +377,18 @@ var game = {
                         game.switchState('wait-for-game-input');
                     }
                 }
+
+                // Show the win pop-up
+                document.getElementById('game-win-popup').setAttribute('class', 'display-block');
             }
         },
     },
     
     // Create a method for switching states
     switchState(newState) {
+
+        // Set the next state so individual states can plan accordingly
+        this.nextState = newState;
 
         // If we have a state loaded already, unload it first
         if (this.currentState !== '') {
@@ -344,6 +404,9 @@ var game = {
         else {
             throw `The state '${this.currentState}' does not exist!`;
         }
+
+        // Clear the next state since there isn't one anymore
+        this.nextState = '';
     }
 };
 
