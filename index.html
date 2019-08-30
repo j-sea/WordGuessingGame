@@ -7,6 +7,65 @@
     <title>Document</title>
 </head>
 <body>
+    <header>
+        <h1>Word Guessing Game</h1>
+    </header>
+    <main>
+        <div id="start-screen">
+            <p>Press any key to start the game!</p>
+        </div>
+        <section id="game-screen">
+            <h2>Guess this <span id="number-of-letters">0</span>-letter word!</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Wins</th>
+                        <th>Losses</th>
+                        <th>Remaining Guesses</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="number-of-wins">0</td>
+                        <td class="number-of-losses">0</td>
+                        <td class="number-of-guesses-left">0</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p id="correct-letters-guessed"></p>
+            <p id="incorrect-letters-guessed"></p>
+
+            <footer>
+                <p>Press letters on your keyboard to guess the word.</p>
+                <p>Press the "Escape" key to go back to the start screen. It <em>will</em> count as a loss.</p>
+            </footer>
+
+            <section id="game-win">
+                <h2>You won! The word was "<span id="current-word"></span>"!</h2>
+
+                <p>You've won <span class="number-of-wins">0</span> game<span class="wins-pluralizer">s</span> <span class="display-block">and lost <span class="number-of-losses">0</span> game<span class="losses-pluralizer">s</span>.</span></p>
+                
+                <footer>
+                    <p>Press the "Enter" key to start a new game!</p>
+                </footer>
+            </section>
+            <section id="game-lose">
+                <h2>You lost! The word was "<span id="current-word"></span>"!</h2>
+
+                <p>You've won <span class="number-of-wins">0</span> game<span class="wins-pluralizer">s</span> <span class="display-block">and lost <span class="number-of-losses">0</span> game<span class="losses-pluralizer">s</span>.</span></p>
+
+                <footer>
+                    <p>Press the "Enter" key to start a new game!</p>
+                </footer>
+            </section>
+        </section>
+    </main>
+    <footer>
+        Copyright &copy;
+    </footer>
+
     <script src="./assets/javascript/game.js"></script>
 </body>
 </html>
