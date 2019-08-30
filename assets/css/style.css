@@ -1,16 +1,39 @@
 body {
     font-family: 'Share Tech', sans-serif;
+    font-size: 24px;
     text-align: center;
+}
+
+h1 {
+    color: salmon;
+    font-size: 300%;
+    margin: 20px auto 30px;
+    text-shadow: 5px 5px 10px black, 0px 0px 3px black;
 }
 
 table {
     border: thin solid black;
-    margin: 0px auto;
+    border-radius: 10px;
+    margin: 0px auto 20px;
 }
 
 th, td {
     border: thin solid black;
+    border-radius: 5px;
     padding: 20px;
+}
+
+th {
+    background-color: lightgray;
+}
+
+main {
+    margin: 40px auto;
+    max-width: 768px;
+}
+
+footer {
+    margin-top: 30px;
 }
 
 .display-block {
@@ -19,6 +42,14 @@ th, td {
 
 .display-none {
     display: none;
+}
+
+#word-play-area {
+    box-sizing: border-box;
+    max-width: 768px;
+    padding: 10px 20px;
+    border: thin solid black;
+    box-shadow: 5px 5px 10px black, 0px 0px 3px black;
 }
 
 #game-win-popup,
@@ -45,20 +76,21 @@ th, td {
     display: block;
     opacity: 0;
     margin-top: -1050px;
+    transition: none;
 }
 
 #game-win-popup {
     width: 700px;
-    height: 600px;
+    height: 650px;
     margin-left: -350px;
-    margin-top: -300px;
+    margin-top: -325px;
 }
 
 #game-lose-popup {
     width: 700px;
-    height: 260px;
+    height: 360px;
     margin-left: -350px;
-    margin-top: -130px;
+    margin-top: -180px;
 }
 
 #game-popup-overlay {
