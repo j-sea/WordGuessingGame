@@ -23,6 +23,17 @@ var game = {
     keysRevealed: [],
     keysIncorrect: [],
 
+    // Create a method to handle setting up a new game
+    setupNewGame: function() {
+        this.currentWord = '';
+        this.uniqueLetters = 0;
+        this.wins = 0;
+        this.losses = 0;
+        this.guesses = 0;
+        this.keysRevealed = [];
+        this.keysIncorrect = [];
+    },
+
     // Create a method for applying guessing logic to a given key character
     makeGuess: function(keyGuessed) {
         // If our key has been guessed before, we waste a guess (if enabled)
@@ -44,10 +55,12 @@ var game = {
     // Create a method for handling a repeat key guess
     handleRepeatGuess(keyGuess) {
         this.guesses++;
-        
+
+        // If we've reached maximum guesses, we lost the game
         if (this.guesses === MAX_GUESSES) {
             this.switchState('game-lose');
         }
+        // Otherwise, continue on as usual and just update the screen
         else {
             this.updateScreen();
         }
@@ -59,9 +72,11 @@ var game = {
 
         this.keysIncorrect.push(keyGuessed);
 
+        // If we've reached maximum guesses, we lost the game
         if (this.guesses === MAX_GUESSES) {
             this.switchState('game-lose');
         }
+        // Otherwise, continue on as usual and just update the screen
         else {
             this.updateScreen();
         }
@@ -73,8 +88,8 @@ var game = {
 
         this.keysRevealed.push(keyGuessed);
 
-        // Unique letters in the current word matching the keys correctly revealed infers we guessed all the characters.
-        // We do this check before determining if max guesses have been reached because we want the player to be able to win on their last guess.
+        // If we guessed all the characters correctly, we won the game.
+        // NOTE: We do this check before determining if max guesses have been reached because we want the player to be able to win on their last guess.
         if (this.uniqueLetters === this.keysRevealed.length) {
             this.switchState('game-win');
         }
@@ -97,54 +112,76 @@ var game = {
     stateObjects: {
         'start-screen': {
             unloadState: function() {
+                // Make sure our key event handler is removed
+                document.onkeyup = undefined;
 
+                console.log("unloading: start-screen");
             },
             loadState: function() {
+                // If any key is pressed, we should start the game
+                document.onkeyup = function(event) {
+                    // Set up a new game
+                    game.setupNewGame();
 
+                    // Since 'this' isn't referencing the game object here, we'll just reference it through the global 'game' variable
+                    game.switchState('wait-for-game-input');
+                };
+
+                console.log("loading: start-screen");
             }
         },
         'wait-for-game-input': {
             unloadState: function() {
 
+                console.log("unloading: waiting for game input");
             },
             loadState: function() {
 
+                console.log("loading: waiting for game input");
             }
         },
         'respond-to-game-input': {
             unloadState: function() {
-
+                
+                console.log("unloading: respond-to-game-input");
             },
             loadState: function() {
-
+                
+                console.log("loading: respond-to-game-input");
             }
         },
         'game-lose': {
             unloadState: function() {
-
+                
+                console.log("unloading: game-lose");
             },
             loadState: function() {
-
+                
+                console.log("loading: game-lose");
             }
         },
         'game-win': {
             unloadState: function() {
-
+                
+                console.log("unloading: game-win");
             },
             loadState: function() {
-
+                
+                console.log("loading: game-win");
             }
         },
     },
     
     // Create a method for switching states
     switchState(newState) {
+        // If we have a state loaded already, unload it first
         if (this.currentState !== '') {
             this.stateObjects[this.currentState].unloadState(); // If the currentState isn't empty, the state object must exist; so no error checking necessary
         }
 
         this.currentState = newState;
 
+        // Now load the new state as long as it exists
         if (this.stateObjects.hasOwnProperty(this.currentState)) {
             this.stateObjects[this.currentState].loadState();
         }
@@ -153,3 +190,6 @@ var game = {
         }
     }
 };
+
+// Load the game
+game.switchState('start-screen');
