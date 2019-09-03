@@ -7,7 +7,8 @@ var HANDLE_REPEAT_GUESSES = false;
 var WORD_LIST = [
     {w:'Steven Universe', h:'<h3>T.V. Show (Animated)</h3><p>This show sets itself apart with incredibly heavy-hitting morals as it progresses. If you haven\'t seen this show, I highly <em>highly</em> recommend it for all ages. It\'s a show full of love without stipulations.</p>',r:'<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/MIREK5ZL1jA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'},
     {w:'Adventure Time', h:'<h3>T.V. Show (Animated)</h3><p>Amusing and energetic, this show sets itself apart with its wildly weird world based on Irish and Celtic mythology and its deep exploration of friendship and overcoming life\'s hardships.</p>',r:'<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/gfijG7pmMqk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'},
-    {w:'Galavant', h:'<h3>T.V. Show (Musical)</h3><p>Hilariously tongue-in-cheek, this show is a great way to relax and enjoy your leisure time. Follow our protagonist as they journey to save their beloved. And yes, they all really do sing. It\'s amazing.</p>',r:'<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/QWnDwM0RSX4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'},
+    {w:'Galavant', h:'<h3>T.V. Show (Musical Comedy)</h3><p>Hilariously tongue-in-cheek, this show is a great way to relax and enjoy your leisure time. Follow our protagonist as they journey to save their beloved. And yes, they all really do sing. It\'s amazing.</p>',r:'<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/QWnDwM0RSX4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'},
+    {w:'Brooklyn Nine-Nine', h:'<h3>T.V. Show (Comedy)</h3><p>One of the best cop shows in existence with a perfect casting, this series maintains a light-hearted mood most of the time while handling several serious topics with a mostly-mature attitude. A relative in the police force informed me it was the most accurate portrayal of police office politics on television.</p>',r:'<iframe width="560" height="315" src="https://www.youtube.com/embed/nYtJSpH4aUY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'},
     {w:'Dead Cells', h:'<h3>Roguelike Video Game</h3><p>One of the best aesthetics in a roguelike in recent years, this game continues to challenge you more and more even after you manage to beat it\'s increasingly-harder modes. While a solid roguelike, it is also a top-quality metroidvania game.</p>',r:'<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/RvGaSPTcTxc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'},
     {w:'Aggretsuko', h:'<h3>T.V. Show (Animated)</h3><p>One of the most frustratingly-relatable and loveable shows, navigating feelings plays a key role in its protagonist\'s daily life just trying to survive, and we get to share in the ups and downs that come along with them.</p>',r:'<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/z9jGaJJlNyo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'},
     {w:'Metric', h:'<h3>Music Band (Indie Rock)</h3><p>The female vocal lead of this quartet carries a diverse array of songs across over six albums varying greatly in genre and feel. Great to sing and dance along with.</p>',r:'<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/uly3S2KjUf4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'},
@@ -184,15 +185,17 @@ var game = {
 
         var correctLettersGuessed = document.getElementById('correct-letters-guessed');
         var revealedLettersString = '';
-        for (var i = 0; i < WORD_LIST[this.currentWordIndex].w.length; i++) {
+        var currentWord = WORD_LIST[this.currentWordIndex].w;
+        for (var i = 0; i < currentWord.length; i++) {
 
-            if (this.keysRevealed.indexOf(WORD_LIST[this.currentWordIndex].w[i].toLocaleLowerCase()) !== -1) {
+            var currentLetter = currentWord[i];
+            if (this.keysRevealed.indexOf(currentLetter.toLocaleLowerCase()) !== -1) {
 
-                revealedLettersString += WORD_LIST[this.currentWordIndex].w[i];
+                revealedLettersString += currentLetter;
             }
-            else if (VALID_LETTER_LIST.indexOf(WORD_LIST[this.currentWordIndex].w[i].toLocaleLowerCase()) === -1) {
+            else if (VALID_LETTER_LIST.indexOf(currentLetter.toLocaleLowerCase()) === -1) {
 
-                revealedLettersString += WORD_LIST[this.currentWordIndex].w[i];
+                revealedLettersString += currentLetter;
             }
             else {
 
@@ -250,6 +253,7 @@ var game = {
 
                 // Make sure our key event handler is removed
                 document.onkeyup = undefined;
+                
 
                 // Hide the game screen if we're going back to the start screen
                 if (game.nextState === 'start-screen') {
